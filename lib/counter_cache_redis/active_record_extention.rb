@@ -29,6 +29,13 @@ module CounterCacheRedis
           redis.decr(_counter_cache_key(class_name, primary_key, tableized_child_model))
         end
 
+        after_create do
+          redis.set(
+            self._counter_cache_key(class_name, primary_key, tableized_child_model),
+            self.send(tableized_child_model).count
+          )
+        end
+
         child_model_class.class_eval do
           after_create do
             self.send(class_name.to_sym).send("_#{tableized_child_model}_count_incr")

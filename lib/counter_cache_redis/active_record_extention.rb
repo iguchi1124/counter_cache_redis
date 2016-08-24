@@ -6,7 +6,7 @@ module CounterCacheRedis
     included do
       def self.counter_cache(tableized_model, redis = Redis.current)
         class_name = self.to_s.downcase
-        child_model = eval tableized_model.to_s.classify
+        child_model_class = eval tableized_model.to_s.classify
         tableized_child_model = tableized_model.to_sym
         primary_key = self.primary_key.to_sym
 
@@ -29,7 +29,7 @@ module CounterCacheRedis
           redis.decr(_counter_cache_key(class_name, primary_key, tableized_child_model))
         end
 
-        child_model.class_eval do
+        child_model_class.class_eval do
           after_create do
             self.send(class_name.to_sym).send("_#{tableized_child_model}_count_incr")
           end

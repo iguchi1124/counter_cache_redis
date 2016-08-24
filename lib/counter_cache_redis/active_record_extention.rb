@@ -10,15 +10,18 @@ module CounterCacheRedis
         tableized_child_model = tableized_model.to_sym
         primary_key = self.primary_key.to_sym
 
-        self.all.each do |model|
-          redis.set(
-            model._counter_cache_key(class_name, primary_key, tableized_child_model),
-            model.send(tableized_child_model).count
-          )
-        end
-
         define_method "#{tableized_child_model}_count" do
-          redis.get(_counter_cache_key(class_name, primary_key, tableized_child_model))
+          count = redis.get(_counter_cache_key(class_name, primary_key, tableized_child_model))
+
+          if count.nil?
+            count = self.send(tableized_child_model).count
+            redis.set(
+              self._counter_cache_key(class_name, primary_key, tableized_child_model),
+              count
+            )
+          end
+
+          count.to_s
         end
 
         define_method "_#{tableized_child_model}_count_incr" do

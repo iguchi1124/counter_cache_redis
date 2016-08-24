@@ -6,7 +6,7 @@ RSpec.describe Post do
 
   describe '#comments_count' do
     it do
-      expect(post.comments_count.to_i).to eq(post.comments.count)
+      expect(post.comments_count).to eq(post.comments.count)
     end
   end
 end

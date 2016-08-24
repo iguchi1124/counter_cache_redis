@@ -21,7 +21,7 @@ module CounterCacheRedis
             )
           end
 
-          count.to_s
+          count.to_i
         end
 
         define_method "_#{tableized_child_model}_count_incr" do

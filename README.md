@@ -1,10 +1,6 @@
 # CounterCacheRedis
 
-Short description and motivation.
-
-## Usage
-
-How to use my rails plugin.
+ActiveRecord child records counter caching on redis.
 
 ## Installation
 
@@ -14,9 +10,24 @@ Add this line to your rails application's Gemfile:
 gem 'counter_cache_redis'
 ```
 
-## Contributing
+## Usage
 
-Contribution directions go here.
+```rb
+class Post
+  has_many :comments
+  counter_cache :comments, Redis.new
+end
+
+class Comment
+  belong_to :post
+end
+
+post = Post.create(title: 'sample title', body: 'post body')
+post.comments_count # => 0
+
+post.comments.create(body: 'comment body')
+post.comments_count # => 1
+```
 
 ## License
 

@@ -1,11 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Post do
-  let!(:post) { Post.create(title: 'title', content: 'content') }
+  let!(:user) { User.create(name: 'user') }
+  let!(:post) { Post.create(user: user, title: 'title', content: 'post content') }
 
   before do
-    post.comments.create(content: 'comment content 1')
-    post.comments.create(content: 'comment content 2')
+    post.comments.create(user: user, content: 'comment content 1')
+    post.comments.create(user: user, content: 'comment content 2')
   end
 
   describe '#comments_count' do
@@ -15,7 +16,7 @@ RSpec.describe Post do
 
     it 'increment comments count' do
       expect {
-        post.comments.create(content: 'new comment content')
+        post.comments.create(user: user, content: 'new comment content')
       }.to change {
         post.comments_count
       }.by(1)
